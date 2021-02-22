@@ -1,0 +1,39 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable_department",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable_employees",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Join2"
+				}
+			],
+			"script": "source(output(\n\t\tdepartmentid as integer,\n\t\tname as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source1\nsource(output(\n\t\temployeeid as integer,\n\t\tname as string,\n\t\taddress as string,\n\t\tgender as string,\n\t\tcity as string,\n\t\tsalary as integer,\n\t\tdepartid as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source2\nsource1, source2 join(departmentid == departid,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join2\nJoin2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tmapColumn(\n\t\tdepartmentid,\n\t\tname = source1@name,\n\t\temployeeid,\n\t\tdepartmentname = source2@name,\n\t\taddress,\n\t\tgender,\n\t\tcity,\n\t\tsalary,\n\t\tdepartid\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

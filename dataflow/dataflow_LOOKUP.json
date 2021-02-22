@@ -1,0 +1,39 @@
+{
+	"name": "dataflow_LOOKUP",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable_employees",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable_department",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Lookup1"
+				}
+			],
+			"script": "source(output(\n\t\temployeeid as integer,\n\t\tname as string,\n\t\taddress as string,\n\t\tgender as string,\n\t\tcity as string,\n\t\tsalary as integer,\n\t\tdepartid as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source1\nsource(output(\n\t\tdepartmentid as integer,\n\t\tname as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source2\nsource1, source2 lookup(departid == departmentid,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup1\nLookup1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

@@ -1,0 +1,49 @@
+{
+	"name": "AzureSqlTable_employees",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase_testdb_linkedservice",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "employeeid",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "name",
+				"type": "varchar"
+			},
+			{
+				"name": "address",
+				"type": "nvarchar"
+			},
+			{
+				"name": "gender",
+				"type": "varchar"
+			},
+			{
+				"name": "city",
+				"type": "varchar"
+			},
+			{
+				"name": "salary",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "departid",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "employees"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
